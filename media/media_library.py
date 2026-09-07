@@ -10,4 +10,4 @@ class MediaLibrary:
         return sum(obj.duration for obj in self.media_objects)
 
     def filter_by_type(self, media_type: str):
-        return [obj for obj in self.media_objects if isinstance(obj, media_type)]
+        return [obj.get_info() for obj in self.media_objects if isinstance(obj, media_type)]
