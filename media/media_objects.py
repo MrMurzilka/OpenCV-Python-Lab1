@@ -50,7 +50,7 @@ class MediaObject:
 
     # Метод для получения информации о медиа объекте
     def get_info(self):
-        return f"{self.filename}: {self.duration} сек"
+        return f"{self.filename}: {self.duration} seconds"
 
     # Метод для получения имени класса и имени файла
     def __str__(self):
