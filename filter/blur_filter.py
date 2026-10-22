@@ -1,11 +1,22 @@
 from filter.image_filter import ImageFilter
-import cv2
 from media.media_objects import MediaObject
+
+import cv2
+
 
 class BlurFilter(ImageFilter):
     """BlurFilter class to apply blur effect to media objects."""
     def __init__(self, factor=1):
         self.factor = factor
+
+    @staticmethod
+    def _can_show_windows():
+        try:
+            cv2.namedWindow("__blur_preview__", cv2.WINDOW_NORMAL)
+            cv2.destroyAllWindows()
+            return True
+        except cv2.error:
+            return False
 
     def apply(self, media_data: MediaObject):
         # Выделяем имя файла без расширения для будущего сохранения результата
@@ -31,7 +42,7 @@ class BlurFilter(ImageFilter):
             height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
             # Создание объекта VideoWriter для записи нового видеофайла с размытием
-            out = cv2.VideoWriter(f"Lab1/source/{name}_Gaussian_blurred.mp4", fourcc, fps, (width, height))
+            out = cv2.VideoWriter(f"source/{name}_Gaussian_blurred.mp4", fourcc, fps, (width, height))
 
             # Блок try-finally для гарантированного освобождения ресурсов OpenCV
             # Покадровое чтение видео, применение размытия и запись в новый файл
@@ -50,18 +61,19 @@ class BlurFilter(ImageFilter):
                     # сохранением деталей и естсвтвенностью изображения и производительностью, по сравнению с другими методами размытия
                     # (например, двустороннее размытие (cv2.bilateralFilter) или размытие по среднему (cv2.blur)
                     blurred_frame = cv2.GaussianBlur(frame, (0,0), self.factor)
-                    # Запись размытого кадра в новый видеофайл и отображение его в окне
+                    # Запись размытого кадра в новый видеофайл и отображение его в окне, если поддерживается GUI
                     out.write(blurred_frame)
-                    cv2.imshow("Blurred Video", blurred_frame)
-
-                    # Проверка нажатия клавиши 'q' для выхода из цикла
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                        break
-            # Гарантированное освобождение ресурсов OpenCV и закрытие всех орон после завершения обработки видео
+                    if self._can_show_windows():
+                        cv2.imshow("Blurred Video", blurred_frame)
+                        # Проверка нажатия клавиши 'q' для выхода из цикла
+                        if cv2.waitKey(1) & 0xFF == ord('q'):
+                            break
+            # Гарантированное освобождение ресурсов OpenCV и закрытие всех окон после завершения обработки видео
             finally:
                 cap.release()
                 out.release()
-                cv2.destroyAllWindows()
+                if self._can_show_windows():
+                    cv2.destroyAllWindows()
                 
         # Если объект является изображением (duration = 0), то применяем размытие к изображению
         else:
@@ -70,5 +82,5 @@ class BlurFilter(ImageFilter):
             if frame is None:
                 print(f"Error opening image file: {media_data.filename}")
             else:
-                cv2.imwrite(f"Lab1/source/Gaussian_blurred_{name}.jpg", cv2.GaussianBlur(frame, (0,0), self.factor))
+                cv2.imwrite(f"source/Gaussian_blurred_{name}.jpg", cv2.GaussianBlur(frame, (0,0), self.factor))
 

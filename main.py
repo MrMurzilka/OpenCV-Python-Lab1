@@ -7,11 +7,11 @@ if __name__ == "__main__":
     media_lib = MediaLibrary()
 
     media_filepaths = [
-        "Lab1/source/test_video1.mp4",
-        "Lab1/source/test_video2.mp4",
-        "Lab1/source/test_video3.mp4",
-        "Lab1/source/test_video4.mp4",
-        "Lab1/source/test_image.jpg",
+        "source/test_video1.mp4",
+        "source/test_video2.mp4",
+        "source/test_video3.mp4",
+        "source/test_video4.mp4",
+        "source/test_image.jpg",
     ]
 
     #MediaLibrary class test
